@@ -11,6 +11,11 @@ var clients = ConcurrentHashMap<String, ClientHandler>()
 var port = 0
 
 fun main() {
+    println("Copyright (c) 2025 hahaha98757 (MIT License)")
+    println("Kill Chain (server) v1.0.1")
+    println("공식 사이트: https://github.com/hahaha98757/kill-chain")
+    println()
+    Thread.sleep(1000)
     while (true) try {
         println("포트를 설정하세요.(0-65535 사이의 정수, 0은 임의의 포트로 설정.)")
         port = readlnOrNull()!!.toInt()
@@ -26,7 +31,7 @@ fun main() {
     }
     port = serverSocket.localPort
     println("서버를 열었습니다.(포트: ${serverSocket.localPort})")
-    println("\'HELP\'를 입력해 명령어 목록을 볼 수 있습니다.")
+    println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
 
     Thread(ServerHandler()).start()
 

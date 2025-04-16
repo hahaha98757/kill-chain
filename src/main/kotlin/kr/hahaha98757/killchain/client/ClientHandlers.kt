@@ -25,7 +25,7 @@ class ReceptionHandler(private val name: String, socket: Socket, private val inp
                 } else println(message)
             }
         } catch (e: Exception) {
-            if (!stop) printErr("서버의 연결이 끊겼습니다.", e)
+            if (!stop) printErr("서버와 연결이 끊겼습니다.", e)
         } finally {
             close()
             exitProcess(0)
@@ -35,7 +35,7 @@ class ReceptionHandler(private val name: String, socket: Socket, private val inp
     private fun processSignal(signal: Array<String>) {
         when (signal[0]) {
             "NameDuplicate" -> {
-                System.err.println("\'$name\'은(는) 중복된 이름입니다.")
+                System.err.println("'$name'은(는) 중복된 이름입니다.")
                 close()
                 exitProcess(2)
             }
@@ -118,7 +118,7 @@ class CommandHandler(private val name: String, socket: Socket, input: BufferedRe
             output.println("signal;Test:$name")
             println("서버에 테스트 신호를 전달했습니다.")
         }
-        else -> System.err.println("\'$command\'은(는) 명령어가 아닙니다.")
+        else -> System.err.println("'$command'은(는) 명령어가 아닙니다.")
     }
 }
 

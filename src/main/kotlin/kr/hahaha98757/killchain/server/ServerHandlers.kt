@@ -25,8 +25,8 @@ class ClientHandler(private val name: String, private val socket: Socket, privat
         try {
             sendAll("$name 님이 접속했습니다.")
             sendAll(getUserList())
-            output.println("\'HELP\'를 입력해 명령어 목록을 볼 수 있습니다.")
-            output.println("\'F2\'를 눌러 테스트를 할 수 있습니다. \'ESC + F1\'을 눌러 강제 종료를 할 수 있습니다.")
+            output.println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
+            output.println("'F2'를 눌러 테스트를 할 수 있습니다. 'ESC + F1'을 눌러 강제 종료를 할 수 있습니다.")
 
             var var1: String?
             while (input.readLine().also { var1 = it } != null) {
@@ -113,7 +113,7 @@ class ServerHandler: Runnable {
                     sendAll("signal;Test:server", false)
                     println("접속한 모든 유저에게 테스트 신호를 전달했습니다.")
                 }
-                else -> System.err.println("\'$command\'은(는) 명령어가 아닙니다.")
+                else -> System.err.println("'$command'은(는) 명령어가 아닙니다.")
             }
         }
     }

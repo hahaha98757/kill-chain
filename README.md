@@ -1,11 +1,10 @@
 # Kill Chain
-GTA 5의 강제 종료 메크로입니다.
+GTA 온라인의 강제 종료 메크로입니다.
 
 서버와 연결하여 유저 한명이 강제 종료를 하면 서버에 접속한 모든 유저도 강제 종료가 진행됩니다.
 
 지원 정보<br>
 - 운영체제: Windows 10 64비트
-- 최소 자바 버전: 17
 - 게임 정보: Grand Theft Auto 5 레거시 및 인핸스드
 
 ## 사용법
@@ -35,13 +34,18 @@ GTA 5의 강제 종료 메크로입니다.
 <br>라이선스 및 저작권 고지 하에 개인적 이용, 수정, 배포, 상업적 이용이 가능하며 보증 및 책임을 지지 않습니다.
 
 ## 크레딧
-- Mixkit의 [Censorship beep](https://mixkit.co/free-sound-effects/beep/) ([Sound Effects Free License](https://mixkit.co/license/#sfxFree))
 - kwhat의 [jnativehook](https://github.com/kwhat/jnativehook/tree/2.2.2) ([GNU 약소 일반 공중 사용 허가서 v3.0](licenses/JNativeHook-LICENSE))
 - JetBrains의 [Kotlin](https://github.com/JetBrains/kotlin) ([아파치 라이선스 2.0](https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt))
+- [beep.wav](src/main/resources/beep.wav): Mixkit의 [Censorship beep](https://mixkit.co/free-sound-effects/beep/) ([Sound Effects Free License](https://mixkit.co/license/#sfxFree))
+- [clientIcon](clientIcon.ico): Freepik의 [섬기는 사람 무료 아이콘](https://www.flaticon.com/kr/free-icon/server_3962020) ([Flaticon 라이센스](licenses/Icon-LICENSE))
+- [serverIcon](serverIcon.ico): Freepik의 [체인 무료 아이콘](https://www.flaticon.com/kr/free-icon/chain_1660930?related_id=1660962&origin=search) ([Flaticon 라이센스](licenses/Icon-LICENSE))
 
 ----
 
 ## 업데이트 로그
+
+### 1.0.1
+- JVM 설치 필요 없는 exe 파일로 배포.
 
 ### 1.0.0
 - 매크로 개발.

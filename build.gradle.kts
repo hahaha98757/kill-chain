@@ -6,11 +6,9 @@ plugins {
 }
 
 group = "kr.hahaha98757.killchain"
-version = "1.0.0"
+version = "1.0.1"
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+java { toolchain.languageVersion.set(JavaLanguageVersion.of(17)) }
 
 repositories {
     mavenCentral()
@@ -24,10 +22,12 @@ val serverMainClass = "kr.hahaha98757.killchain.server.MainServerKt"
 val clientMainClass = "kr.hahaha98757.killchain.client.MainClientKt"
 val serverPackage = "kr/hahaha98757/killchain/server/**"
 val clientPackage = "kr/hahaha98757/killchain/client/**"
-val buildFolder = file("${layout.buildDirectory.locationOnly.get()}/libs/KillChain-v$version")
+val packageFolder = file("build/jpackage/KillChain-$version")
+
+tasks.named<Jar>("jar") { isEnabled = false }
 
 tasks.register<ShadowJar>("buildServer") {
-    destinationDirectory.set(buildFolder)
+    destinationDirectory.set(file("build/libs/server"))
     archiveBaseName.set("server")
     archiveVersion.set("")
     archiveClassifier.set("")
@@ -37,7 +37,7 @@ tasks.register<ShadowJar>("buildServer") {
 }
 
 tasks.register<ShadowJar>("buildClient") {
-    destinationDirectory.set(buildFolder)
+    destinationDirectory.set(file("build/libs/client"))
     archiveBaseName.set("client")
     archiveVersion.set("")
     archiveClassifier.set("")
@@ -46,16 +46,36 @@ tasks.register<ShadowJar>("buildClient") {
     configurations = listOf(project.configurations.runtimeClasspath.get())
 }
 
-tasks.named<Jar>("jar") {
-    isEnabled = false
-    finalizedBy("copyResources")
+tasks.register<Exec>("packageExeServer") {
+    commandLine(
+        "jpackage",
+        "--type", "app-image",
+        "--input", "build/libs/server",
+        "--name", "server",
+        "--main-jar", "server.jar",
+        "--icon", "serverIcon.ico",
+        "--dest", "build/jpackage/KillChain-$version",
+        "--win-console"
+    )
+    doLast { file("build/jpackage/KillChain-$version/server/server.ico").delete() }
+}
+
+tasks.register<Exec>("packageExeClient") {
+    commandLine(
+        "jpackage",
+        "--type", "app-image",
+        "--input", "build/libs/client",
+        "--name", "client",
+        "--main-jar", "client.jar",
+        "--icon", "clientIcon.ico",
+        "--dest", "build/jpackage/KillChain-$version",
+        "--win-console"
+    )
+    doLast { file("build/jpackage/KillChain-$version/client/client.ico").delete() }
 }
 
 tasks.named("build") {
+    if (!packageFolder.exists()) packageFolder.mkdirs()
     dependsOn("buildServer", "buildClient")
-}
-
-tasks.register<Copy>("copyResources") {
-    from("resources")
-    into(buildFolder)
+    finalizedBy("packageExeServer", "packageExeClient")
 }
