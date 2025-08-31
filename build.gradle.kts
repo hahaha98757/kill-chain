@@ -1,81 +1,43 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.1.20"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.1.20" apply false
 }
 
-group = "kr.hahaha98757.killchain"
-version = "1.0.1"
-
-java { toolchain.languageVersion.set(JavaLanguageVersion.of(17)) }
-
-repositories {
-    mavenCentral()
+allprojects {
+    group = "kr.hahaha98757.killchain"
+    version = "1.1.0"
 }
 
-dependencies {
-    implementation("com.github.kwhat:jnativehook:2.2.2")
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+    }
+
+    tasks.named<Jar>("jar") { enabled = false }
 }
 
-val serverMainClass = "kr.hahaha98757.killchain.server.MainServerKt"
-val clientMainClass = "kr.hahaha98757.killchain.client.MainClientKt"
-val serverPackage = "kr/hahaha98757/killchain/server/**"
-val clientPackage = "kr/hahaha98757/killchain/client/**"
-val packageFolder = file("build/jpackage/KillChain-$version")
+val packageFolder = file("build/KillChain-$version")
 
-tasks.named<Jar>("jar") { isEnabled = false }
+tasks.register("build") {
+    if (packageFolder.exists()) packageFolder.deleteRecursively()
+    packageFolder.mkdirs()
+    dependsOn(":client:packageExe", ":server:packageExe")
 
-tasks.register<ShadowJar>("buildServer") {
-    destinationDirectory.set(file("build/libs/server"))
-    archiveBaseName.set("server")
-    archiveVersion.set("")
-    archiveClassifier.set("")
-    manifest { attributes["Main-Class"] = serverMainClass }
-    from(sourceSets.main.get().output) { exclude(clientPackage) }
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-}
-
-tasks.register<ShadowJar>("buildClient") {
-    destinationDirectory.set(file("build/libs/client"))
-    archiveBaseName.set("client")
-    archiveVersion.set("")
-    archiveClassifier.set("")
-    manifest { attributes["Main-Class"] = clientMainClass }
-    from(sourceSets.main.get().output) { exclude(serverPackage) }
-    configurations = listOf(project.configurations.runtimeClasspath.get())
-}
-
-tasks.register<Exec>("packageExeServer") {
-    commandLine(
-        "jpackage",
-        "--type", "app-image",
-        "--input", "build/libs/server",
-        "--name", "server",
-        "--main-jar", "server.jar",
-        "--icon", "serverIcon.ico",
-        "--dest", "build/jpackage/KillChain-$version",
-        "--win-console"
-    )
-    doLast { file("build/jpackage/KillChain-$version/server/server.ico").delete() }
-}
-
-tasks.register<Exec>("packageExeClient") {
-    commandLine(
-        "jpackage",
-        "--type", "app-image",
-        "--input", "build/libs/client",
-        "--name", "client",
-        "--main-jar", "client.jar",
-        "--icon", "clientIcon.ico",
-        "--dest", "build/jpackage/KillChain-$version",
-        "--win-console"
-    )
-    doLast { file("build/jpackage/KillChain-$version/client/client.ico").delete() }
-}
-
-tasks.named("build") {
-    if (!packageFolder.exists()) packageFolder.mkdirs()
-    dependsOn("buildServer", "buildClient")
-    finalizedBy("packageExeServer", "packageExeClient")
+    doLast {
+        copy {
+            from(file("client/build/jpackage"))
+            into(packageFolder)
+        }
+        copy {
+            from(file("server/build/jpackage"))
+            into(packageFolder)
+        }
+    }
 }

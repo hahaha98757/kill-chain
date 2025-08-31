@@ -1,4 +1,6 @@
 # Kill Chain
+[다운로드](https://github.com/hahaha98757/kill-chain/releases)
+
 GTA 온라인의 강제 종료 메크로입니다.
 
 서버와 연결하여 유저 한명이 강제 종료를 하면 서버에 접속한 모든 유저도 강제 종료가 진행됩니다.
@@ -9,7 +11,7 @@ GTA 온라인의 강제 종료 메크로입니다.
 
 ## 사용법
 1. 서버를 실행하고, 포트를 지정하여 서버를 엽니다.
-2. 클라이언트를 실행하고, 닉네임, 호스트의 IP, 포트를 입력하여 서버에 접속합니다.(닉네임은 중복될 수 없으며, 'server'로 설정할 수 없습니다.)
+2. 클라이언트를 실행하고, 닉네임, 호스트의 IP, 포트를 입력하여 서버에 접속합니다. (닉네임은 중복될 수 없으며, 'server'로 설정할 수 없습니다.)
 3. 'F2' 키를 눌러 테스트를 합니다. 테스트 성공 시 소리 재생과 함께 테스트를 시도한 유저로부터 테스트를 받았다고 출력됩니다.
 4. 'ESC' 키와 'F1' 키를 동시에 눌러 강제 종료를 할 수 있습니다.
 
@@ -36,13 +38,17 @@ GTA 온라인의 강제 종료 메크로입니다.
 ## 크레딧
 - kwhat의 [jnativehook](https://github.com/kwhat/jnativehook/tree/2.2.2) ([GNU 약소 일반 공중 사용 허가서 v3.0](licenses/JNativeHook-LICENSE))
 - JetBrains의 [Kotlin](https://github.com/JetBrains/kotlin) ([아파치 라이선스 2.0](https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt))
-- [beep.wav](src/main/resources/beep.wav): Mixkit의 [Censorship beep](https://mixkit.co/free-sound-effects/beep/) ([Sound Effects Free License](https://mixkit.co/license/#sfxFree))
-- [clientIcon](clientIcon.ico): Freepik의 [섬기는 사람 무료 아이콘](https://www.flaticon.com/kr/free-icon/server_3962020) ([Flaticon 라이센스](licenses/Icon-LICENSE))
-- [serverIcon](serverIcon.ico): Freepik의 [체인 무료 아이콘](https://www.flaticon.com/kr/free-icon/chain_1660930?related_id=1660962&origin=search) ([Flaticon 라이센스](licenses/Icon-LICENSE))
+- [clientIcon](client/icon.ico): Freepik의 [섬기는 사람 무료 아이콘](https://www.flaticon.com/kr/free-icon/server_3962020) ([Flaticon 라이센스](licenses/Icon-LICENSE))
+- [serverIcon](server/icon.ico): Freepik의 [체인 무료 아이콘](https://www.flaticon.com/kr/free-icon/chain_1660930?related_id=1660962&origin=search) ([Flaticon 라이센스](licenses/Icon-LICENSE))
 
 ----
 
 ## 업데이트 로그
+
+### 1.1.0
+- 모듈 구조로 변경.
+- 코드 최적화.
+- 종료 전 대기 기능 추가.
 
 ### 1.0.1
 - JVM 설치 필요 없는 exe 파일로 배포.
