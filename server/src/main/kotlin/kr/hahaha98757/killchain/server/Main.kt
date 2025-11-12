@@ -15,15 +15,15 @@ var port = 0
 
 fun main() {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (server) v1.1.0")
+    println("Kill Chain (server) v1.1.1")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     Thread.sleep(1000)
 
     while (true) {
-        println("포트를 설정하세요. (0-65535 사이의 정수, 0은 임의의 포트로 설정.)")
+        println("포트를 설정하세요. (1-65535 사이의 정수)")
         port = readln().toIntOrNull() ?: continue
-        if (port in 0..65535) break
+        if (port in 1..65535) break
     }
 
     println()

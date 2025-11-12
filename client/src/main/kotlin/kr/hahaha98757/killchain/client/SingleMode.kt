@@ -33,7 +33,10 @@ fun singleMode() {
     while (true) readln().takeUnless { it.isEmpty() }?.let {
         when (it.uppercase()) {
             "CLS" -> cls()
-            "EXIT" -> exit()
+            "EXIT" -> {
+                GlobalScreen.unregisterNativeHook()
+                exit()
+            }
             "HELP" -> help()
             "KILL" -> {
                 println("강제종료를 시도합니다.")

@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "kr.hahaha98757.killchain"
-    version = "1.1.0"
+    version = "1.1.1"
 }
 
 subprojects {

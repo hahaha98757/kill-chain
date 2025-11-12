@@ -1,5 +1,6 @@
 package kr.hahaha98757.killchain.client
 
+import com.github.kwhat.jnativehook.GlobalScreen
 import kr.hahaha98757.killchain.common.AbstractClient
 import kr.hahaha98757.killchain.common.beep
 import kr.hahaha98757.killchain.common.exit
@@ -33,6 +34,7 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
 
     override fun onException(e: Throwable) {
         printErr("서버와 연결이 끊겼습니다.", e)
+        GlobalScreen.unregisterNativeHook()
         exit(-1)
     }
 
@@ -41,6 +43,7 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
             "Close" -> {
                 println("서버가 연결을 끊었습니다.")
                 close()
+                GlobalScreen.unregisterNativeHook()
                 exit()
             }
             "Test" -> {

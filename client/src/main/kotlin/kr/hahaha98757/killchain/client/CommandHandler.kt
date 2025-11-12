@@ -1,5 +1,6 @@
 package kr.hahaha98757.killchain.client
 
+import com.github.kwhat.jnativehook.GlobalScreen
 import kr.hahaha98757.killchain.common.IClient
 import kr.hahaha98757.killchain.common.beep
 import kr.hahaha98757.killchain.common.cls
@@ -16,6 +17,7 @@ class CommandHandler(private val client: IClient): Runnable {
                 "EXIT" -> {
                     println("서버를 떠나는 중...")
                     client.close()
+                    GlobalScreen.unregisterNativeHook()
                     exit()
                 }
                 "HELP" -> help()

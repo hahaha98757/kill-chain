@@ -10,7 +10,7 @@ import java.util.logging.Logger
 
 fun main() {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (client) v1.1.0")
+    println("Kill Chain (client) v1.1.1")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     Thread.sleep(1000)
@@ -86,6 +86,7 @@ fun main() {
         Thread(CommandHandler(client)).start()
     }.onFailure {
         printErr("서버 접속에 실패했습니다.", it)
+        GlobalScreen.unregisterNativeHook()
         exit(-1)
     }
 }
