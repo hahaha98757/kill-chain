@@ -38,7 +38,7 @@ fun exit(code: Int = 0): Nothing = if (code == 0) {
 fun beep() = Thread {
     val frequency = 1000.0
     val durationMs = 200
-    val volume = 0.5
+    val volume = 0.1
 
     val sampleRate = 44100f
     val samples = (durationMs / 1000.0 * sampleRate).toInt()
