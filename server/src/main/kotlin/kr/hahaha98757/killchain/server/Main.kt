@@ -15,7 +15,7 @@ var port = 0
 
 fun main() {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (server) v1.1.1")
+    println("Kill Chain (server) v1.1.2")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     Thread.sleep(1000)
