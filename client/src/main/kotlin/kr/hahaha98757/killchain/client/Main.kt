@@ -10,7 +10,7 @@ import java.util.logging.Logger
 
 fun main() {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (client) v1.1.2")
+    println("Kill Chain (client) v2.0.0")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     Thread.sleep(1000)

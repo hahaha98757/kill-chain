@@ -6,7 +6,8 @@ plugins {
 
 allprojects {
     group = "kr.hahaha98757.killchain"
-    version = "1.1.2"
+    val version: String by project
+    this.version = version
 }
 
 subprojects {
