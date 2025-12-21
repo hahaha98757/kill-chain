@@ -34,12 +34,15 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
 
     override fun onException(e: Throwable) {
         printErr("서버와 연결이 끊겼습니다.", e)
-        GlobalScreen.unregisterNativeHook()
-        exit(-1)
+        beep(500.0, 1000, 1.0)
     }
 
     override fun processSignal(signal: Array<String>) {
         when (signal[0]) {
+            "Leave" -> {
+                println("${signal[1]} 님의 연결이 끊겼습니다.")
+                beep(500.0, 1000, 1.0)
+            }
             "Close" -> {
                 println("서버가 연결을 끊었습니다.")
                 close()
@@ -48,12 +51,13 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
             }
             "Test" -> {
                 println("${signal[1]} 님으로부터 테스트 신호를 받았습니다.")
-                beep()
+                beep(1000.0)
             }
             "Kill" -> {
                 println("${signal[1]} 님으로 부터 강제 종료 신호를 받았습니다.")
                 kill()
             }
+            "Ping" -> send("signal;Pong")
         }
     }
 }

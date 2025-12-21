@@ -32,10 +32,9 @@ fun main() {
     println()
     val host: String
     while (true) {
-        println("호스트의 IP를 입력하세요.")
+        println("호스트의 IP를 입력하세요. (빈칸일 경우 루프백 IP로 접속합니다.)")
         val str = readln()
-        if (str.isEmpty()) continue
-        host = str
+        host = str.ifEmpty { "127.0.0.1" }
         break
     }
 
@@ -76,7 +75,7 @@ fun main() {
 
                 override fun doTest() {
                     println("테스트를 시도합니다.")
-                    beep()
+                    beep(1000.0)
                     client.send("signal;Test:$name")
                     println("서버에 테스트 신호를 전달했습니다.")
                 }

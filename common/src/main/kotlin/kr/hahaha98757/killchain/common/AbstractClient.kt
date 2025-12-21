@@ -51,4 +51,6 @@ abstract class AbstractClient(override val name: String, private val socket: Soc
         }
         if (isThrown) throw e
     }
+
+    override fun isClosed() = stop
 }

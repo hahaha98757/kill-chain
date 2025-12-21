@@ -22,6 +22,8 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
 
     override fun onException(e: Throwable) {
         printErr("$name 님의 연결이 끊겼습니다.", e)
+        sendAll("signal;Leave:$name", false)
+        sendAll(getUserList())
     }
 
     override fun processSignal(signal: Array<String>) {
@@ -43,6 +45,7 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
                 sendAll(getUserList())
             }
             "Port" -> send("포트: $port")
+            "Pong" -> ClientObserver.onPong(name)
         }
     }
 

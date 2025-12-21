@@ -5,7 +5,7 @@ import kr.hahaha98757.killchain.common.exit
 import kr.hahaha98757.killchain.common.help
 import kr.hahaha98757.killchain.common.printErr
 
-class CommandHandler: Runnable {
+object CommandHandler: Runnable {
     override fun run() {
         while (true) {
             val command = readln()

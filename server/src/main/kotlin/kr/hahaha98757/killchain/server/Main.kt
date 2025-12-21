@@ -38,7 +38,8 @@ fun main() {
     println("서버를 열었습니다. (포트: $port)")
     println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
 
-    Thread(CommandHandler()).start()
+    Thread(CommandHandler).start()
+    Thread(ClientObserver).start()
 
     while (true) try {
         val socket = serverSocket.accept()

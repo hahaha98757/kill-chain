@@ -23,7 +23,7 @@ fun singleMode() {
             }
             override fun doTest() {
                 println("테스트를 시도합니다.")
-                beep()
+                beep(1000.0)
             }
         })
     }.start()
@@ -45,7 +45,7 @@ fun singleMode() {
             "LIST", "PORT" -> printErr("싱글모드에서 사용할 수 없습니다.")
             "TEST" -> {
                 println("테스트를 시도합니다.")
-                beep()
+                beep(1000.0)
             }
             else -> printErr("'$it'은(는) 명령어가 아닙니다.")
         }

@@ -35,11 +35,7 @@ fun exit(code: Int = 0): Nothing = if (code == 0) {
     exitProcess(code)
 }
 
-fun beep() = Thread {
-    val frequency = 1000.0
-    val durationMs = 200
-    val volume = 0.1
-
+fun beep(frequency: Double, durationMs: Int = 200, volume: Double = 0.1) = Thread {
     val sampleRate = 44100f
     val samples = (durationMs / 1000.0 * sampleRate).toInt()
     val buffer = ByteArray(samples)
