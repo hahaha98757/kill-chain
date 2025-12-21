@@ -20,11 +20,10 @@ fun main() {
     println()
     Thread.sleep(1000)
 
-    while (true) {
+    do {
         println("포트를 설정하세요. (1-65535 사이의 정수)")
-        port = readln().toIntOrNull() ?: continue
-        if (port in 1..65535) break
-    }
+        port = readln().toIntOrNull() ?: 0
+    } while (port !in 1..65535)
 
     println()
     val serverSocket = runCatching { ServerSocket(port) }.getOrElse {

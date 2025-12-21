@@ -15,14 +15,11 @@ fun main() {
     println()
     Thread.sleep(1000)
 
-    val name: String
-    while (true) {
+    var name: String
+    do {
         println("닉네임을 입력하세요. (중복 불가, 'server' 사용 불가, 'client'를 입력하여 싱글모드 사용.)")
-        val str = readln()
-        if (str.isEmpty() || str == "server") continue
-        name = str
-        break
-    }
+        name = readln()
+    } while (name.isEmpty() || name == "server")
     if (name == "client") {
         cls()
         singleMode()
@@ -30,24 +27,17 @@ fun main() {
     }
 
     println()
-    val host: String
-    while (true) {
-        println("호스트의 IP를 입력하세요. (빈칸일 경우 루프백 IP로 접속합니다.)")
-        val str = readln()
-        host = str.ifEmpty { "127.0.0.1" }
-        break
-    }
+    println("호스트의 IP를 입력하세요. (빈칸일 경우 루프백 IP로 접속합니다.)")
+    val str = readln()
+    val host = str.ifEmpty { "127.0.0.1" }
+
 
     println()
-    val port: Int
-    while (true) {
+    var port: Int
+    do {
         println("포트를 입력하세요. (1-65535 사이의 정수.)")
-        val str = readln()
-        val num = str.toIntOrNull() ?: continue
-        if (num !in 1..65535) continue
-        port = num
-        break
-    }
+        port = readln().toIntOrNull() ?: 0
+    } while (port !in 1..65535)
 
     cls()
 
