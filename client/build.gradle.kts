@@ -1,11 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.4.3"
 }
 
 dependencies {
     implementation(project(":common"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("com.github.kwhat:jnativehook:2.2.2")
 }
 
@@ -19,6 +20,8 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.register<Exec>("packageExe") {
+    group = "build"
+    description = "Packages the application into an executable format using JPackage."
     dependsOn("shadowJar")
     if (file("build/jpackage").exists()) file("build/jpackage").deleteRecursively()
     commandLine(
