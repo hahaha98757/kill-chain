@@ -1,11 +1,10 @@
 package kr.hahaha98757.killchain.server
 
-import kr.hahaha98757.killchain.common.IClient
-import kr.hahaha98757.killchain.common.NameDuplicateException
-import kr.hahaha98757.killchain.common.cls
-import kr.hahaha98757.killchain.common.exit
-import kr.hahaha98757.killchain.common.printErr
-import java.io.*
+import kr.hahaha98757.killchain.common.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.net.ServerSocket
 import java.util.concurrent.ConcurrentHashMap
 
@@ -54,9 +53,9 @@ fun main() {
     }
 }
 
-fun sendAll(message: String, isPrint: Boolean = true, without: String? = null) {
-    if (isPrint) println(message)
-    clients.forEach { (name, client) -> if (name != without) client.send(message) }
+fun sendAll(packet: Packet, isPrint: Boolean = true, without: String? = null) {
+    if (isPrint && packet is MessagePacket) println(packet.message)
+    clients.forEach { (name, client) -> if (name != without) client.send(packet) }
 }
 
 fun getUserList() = "현재 유저 목록: ${clients.keys().toList()}"

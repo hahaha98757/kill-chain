@@ -1,9 +1,6 @@
 package kr.hahaha98757.killchain.server
 
-import kr.hahaha98757.killchain.common.cls
-import kr.hahaha98757.killchain.common.exit
-import kr.hahaha98757.killchain.common.help
-import kr.hahaha98757.killchain.common.printErr
+import kr.hahaha98757.killchain.common.*
 
 object CommandHandler: Runnable {
     override fun run() {
@@ -18,13 +15,13 @@ object CommandHandler: Runnable {
                 }
                 "HELP" -> help()
                 "KILL" -> {
-                    sendAll("signal;Kill:server", false)
+                    sendAll(KillPacket("server"), false)
                     println("접속한 모든 유저에게 강제 종료 신호를 전달했습니다.")
                 }
                 "LIST" -> println(getUserList())
                 "PORT" -> println("포트: $port")
                 "TEST" -> {
-                    sendAll("signal;Test:server", false)
+                    sendAll(TestPacket("server"), false)
                     println("접속한 모든 유저에게 테스트 신호를 전달했습니다.")
                 }
                 else -> printErr("'$command'은(는) 명령어가 아닙니다.")

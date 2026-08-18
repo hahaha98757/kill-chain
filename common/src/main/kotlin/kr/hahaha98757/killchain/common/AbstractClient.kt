@@ -9,22 +9,26 @@ abstract class AbstractClient(override val name: String, private val socket: Soc
     @Volatile
     private var stop = false
 
-    protected abstract fun processSignal(signal: Array<String>)
+    protected abstract fun processSignal(packet: SignalPacket)
     protected abstract fun onException(e: Throwable)
 
     override fun start() = Thread(this).start()
 
-    override fun send(message: String) = output.println(message)
+    override fun send(packet: Packet) = output.println(PacketCodec.encode(packet))
 
     override fun run() {
         var throwable: Throwable? = null
         try {
             while (!stop) {
-                val message = input.readLine() ?: break
-                if (message.startsWith("signal;")) {
-                    val signal = message.split(";")[1]
-                    processSignal(signal.split(":").toTypedArray())
-                } else println(message)
+                val received = input.readLine() ?: break
+                val packet = PacketCodec.decode(received) ?: run {
+                    printErr("알 수 없는 데이터 수신: $received")
+                    continue
+                }
+                when (packet) {
+                    is MessagePacket -> println(packet.message)
+                    is SignalPacket -> processSignal(packet)
+                }
             }
         } catch (e: Throwable) {
             if (!stop) throwable = e
@@ -37,7 +41,7 @@ abstract class AbstractClient(override val name: String, private val socket: Soc
     override fun close() {
         if (stop) return
         stop = true
-        send("signal;Close")
+        send(ClosePacket)
         var isThrown = false
         val e = IOException("Failed to close.")
         output.close()

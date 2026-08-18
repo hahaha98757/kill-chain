@@ -8,44 +8,45 @@ import java.net.Socket
 class Client(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractClient(name, socket, input, output) {
     init {
         if (clients.containsKey(name)) {
-            send("signal;Name:Duplicate")
+            send(DuplicatePacket)
             close()
             throw NameDuplicateException(name)
         } else {
-            send("signal;Name:Accept")
+            send(AcceptPacket)
             clients[name] = this
-            sendAll("$name 님이 접속했습니다.")
-            sendAll(getUserList())
+            sendAll(MessagePacket("$name 님이 접속했습니다."))
+            sendAll(MessagePacket(getUserList()))
             start()
         }
     }
 
     override fun onException(e: Throwable) {
         printErr("$name 님의 연결이 끊겼습니다.", e)
-        sendAll("signal;Leave:$name", false)
-        sendAll(getUserList())
+        sendAll(LeavePacket(name), false)
+        sendAll(MessagePacket(getUserList()))
     }
 
-    override fun processSignal(signal: Array<String>) {
-        when (signal[0]) {
-            "Test" -> {
-                println("$name 님이 테스트를 시도했습니다.")
-                sendAll("signal;Test:$name", false, name)
+    override fun processSignal(packet: SignalPacket) {
+        when (packet) {
+            is ListPacket -> send(MessagePacket(getUserList()))
+            is PortPacket -> send(MessagePacket("포트: $port"))
+            is TestPacket -> {
+                println("${packet.sender} 님이 테스트를 시도했습니다.")
+                sendAll(packet, false, packet.sender)
                 println("접속한 모든 유저에게 신호를 전달했습니다.")
             }
-            "Kill" -> {
-                println("$name 님이 강제 종료를 시도했습니다.")
-                sendAll("signal;Kill:$name", false, name)
+            is KillPacket -> {
+                println("${packet.sender} 님이 강제 종료를 시도했습니다.")
+                sendAll(packet, false, packet.sender)
                 println("접속한 모든 유저에게 강제 종료 신호를 전달했습니다.")
             }
-            "List" -> send(getUserList())
-            "Close" -> {
-                sendAll("$name 님이 서버를 떠났습니다.")
+            is PongPacket -> ClientObserver.onPong(name)
+            is ClosePacket -> {
+                sendAll(MessagePacket("$name 님이 서버를 떠났습니다."))
                 close()
-                sendAll(getUserList())
+                sendAll(MessagePacket(getUserList()))
             }
-            "Port" -> send("포트: $port")
-            "Pong" -> ClientObserver.onPong(name)
+            else -> printErr("$name 님으로부터 잘못된 패킷을 받았습니다. (패킷: $packet)")
         }
     }
 

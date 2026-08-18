@@ -2,7 +2,10 @@ package kr.hahaha98757.killchain.client
 
 import com.github.kwhat.jnativehook.GlobalScreen
 import kr.hahaha98757.killchain.common.*
-import java.io.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.net.Socket
 import java.util.logging.Level
 import java.util.logging.LogManager
@@ -59,14 +62,14 @@ fun main() {
                 override fun doKill() {
                     println("강제종료를 시도합니다.")
                     kill()
-                    client.send("signal;Kill:$name")
+                    client.send(KillPacket(name))
                     println("서버에 강제 종료 신호를 전달했습니다.")
                 }
 
                 override fun doTest() {
                     println("테스트를 시도합니다.")
                     beep(1000.0)
-                    client.send("signal;Test:$name")
+                    client.send(TestPacket(name))
                     println("서버에 테스트 신호를 전달했습니다.")
                 }
             })
