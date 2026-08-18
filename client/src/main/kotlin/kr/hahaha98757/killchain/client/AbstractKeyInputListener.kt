@@ -9,17 +9,15 @@ abstract class AbstractKeyInputListener: NativeKeyListener {
     abstract fun doKill()
     abstract fun doTest()
 
-    override fun nativeKeyPressed(event: NativeKeyEvent?) {
-        if (event == null) return
+    override fun nativeKeyPressed(event: NativeKeyEvent) {
         if (pressedKeys.add(event.keyCode)) {
-            if ((event.keyCode == NativeKeyEvent.VC_F1 && pressedKeys.contains(NativeKeyEvent.VC_ESCAPE))
-                || (event.keyCode == NativeKeyEvent.VC_ESCAPE && pressedKeys.contains(NativeKeyEvent.VC_F1)))
+            if ((event.keyCode == NativeKeyEvent.VC_F1 && NativeKeyEvent.VC_ESCAPE in pressedKeys) ||
+                (event.keyCode == NativeKeyEvent.VC_ESCAPE && NativeKeyEvent.VC_F1 in pressedKeys))
                 doKill()
             if (event.keyCode == NativeKeyEvent.VC_F2) doTest()
         }
     }
-    override fun nativeKeyReleased(event: NativeKeyEvent?) {
-        if (event == null) return
-        pressedKeys.remove(event.keyCode)
+    override fun nativeKeyReleased(event: NativeKeyEvent) {
+        pressedKeys -= event.keyCode
     }
 }

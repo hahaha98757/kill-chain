@@ -29,8 +29,8 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
         }
     }
 
-    override fun onException(e: Throwable) {
-        printErr("서버와 연결이 끊겼습니다.", e)
+    override fun onException(throwable: Throwable) {
+        printErr("서버와 연결이 끊겼습니다.", throwable)
         beep(500.0, 1000, 1.0)
     }
 

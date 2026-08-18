@@ -12,6 +12,8 @@ val clients = ConcurrentHashMap<String, IClient>()
 var port = 0
     private set
 
+val userListMsgPacket get() = MessagePacket("현재 유저 목록: ${clients.keys().toList()}")
+
 fun main() {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
     println("Kill Chain (server) v2.0.0")
@@ -53,9 +55,11 @@ fun main() {
     }
 }
 
-fun sendAll(packet: Packet, isPrint: Boolean = true, without: String? = null) {
-    if (isPrint && packet is MessagePacket) println(packet.message)
-    clients.forEach { (name, client) -> if (name != without) client.send(packet) }
+fun sendAll(packet: Packet, vararg exclude: String) {
+    clients.forEach { (name, client) -> if (name !in exclude) client.send(packet) }
 }
 
-fun getUserList() = "현재 유저 목록: ${clients.keys().toList()}"
+fun printAndSendAll(packet: MessagePacket, vararg exclude: String) {
+    println(packet.message)
+    sendAll(packet, *exclude)
+}

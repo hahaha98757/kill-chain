@@ -19,10 +19,11 @@ fun main() {
     Thread.sleep(1000)
 
     var name: String
-    do {
+    while (true) {
         println("닉네임을 입력하세요. (중복 불가, 'server' 사용 불가, 'client'를 입력하여 싱글모드 사용.)")
         name = readln()
-    } while (name.isEmpty() || name == "server")
+        if (!name.isEmpty() && name != "server") break
+    }
     if (name == "client") {
         cls()
         singleMode()
@@ -37,10 +38,11 @@ fun main() {
 
     println()
     var port: Int
-    do {
+    while (true) {
         println("포트를 입력하세요. (1-65535 사이의 정수.)")
-        port = readln().toIntOrNull() ?: 0
-    } while (port !in 1..65535)
+        port = readln().toIntOrNull() ?: continue
+        if (port in 1..65535) break
+    }
 
     cls()
 
@@ -84,6 +86,10 @@ fun main() {
 }
 
 fun kill() {
-    Runtime.getRuntime().exec("CMD /C TASKKILL /F /IM GTA5_Enhanced.exe")
-    Runtime.getRuntime().exec("CMD /C TASKKILL /F /IM GTA5.exe")
+    ProcessBuilder(
+        "taskkill",
+        "/F",
+        "/IM", "GTA5.exe",
+        "/IM", "GTA5_Enhanced.exe"
+    ).start()
 }
