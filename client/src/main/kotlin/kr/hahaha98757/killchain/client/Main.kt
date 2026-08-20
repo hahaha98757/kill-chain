@@ -60,7 +60,7 @@ fun main(): Unit = runBlocking {
         output.println(name)
         if (!input.readLine().toBoolean()) {
             printErr("중복된 닉네임입니다.")
-            exit(-1)
+            exit(1)
         }
 
         val client = Connection(name, socket, input, output)
