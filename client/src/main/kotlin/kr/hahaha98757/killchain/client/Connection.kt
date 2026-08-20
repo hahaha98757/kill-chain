@@ -6,29 +6,7 @@ import java.io.BufferedReader
 import java.io.PrintWriter
 import java.net.Socket
 
-class Client(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractClient(name, socket, input, output) {
-    init {
-        send(NamePacket(name))
-        when (val packet = PacketCodec.decode(input.readLine())) {
-            is DuplicatePacket -> {
-                printErr("'$name'은(는) 중복된 이름입니다.")
-                close()
-                exit(1)
-            }
-            is AcceptPacket -> {
-                println("서버에 접속했습니다.")
-                println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
-                println("'F2'를 눌러 테스트를 할 수 있습니다. 'ESC + F1'을 눌러 강제 종료를 할 수 있습니다.")
-                start()
-            }
-            else -> {
-                printErr("잘못된 패킷을 받았습니다. (패킷: $packet)")
-                close()
-                exit(-1)
-            }
-        }
-    }
-
+class Connection(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractConnection(name, socket, input, output) {
     override fun onException(throwable: Throwable) {
         printErr("서버와 연결이 끊겼습니다.", throwable)
         beep(500.0, 1000, 1.0)

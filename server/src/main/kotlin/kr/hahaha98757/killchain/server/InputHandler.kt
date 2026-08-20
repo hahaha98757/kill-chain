@@ -1,11 +1,13 @@
 package kr.hahaha98757.killchain.server
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kr.hahaha98757.killchain.common.*
 
-object CommandHandler: Runnable {
-    override fun run() {
+object InputHandler {
+    suspend fun start() {
         while (true) {
-            val command = readln()
+            val command = withContext(Dispatchers.IO) { readln() }
             when (command.uppercase()) {
                 "CLS" -> cls()
                 "EXIT" -> {

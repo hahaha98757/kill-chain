@@ -1,28 +1,30 @@
 package kr.hahaha98757.killchain.common
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.PrintWriter
 import java.net.Socket
 
-abstract class AbstractClient(override val name: String, private val socket: Socket, private val input: BufferedReader, private val output: PrintWriter): IClient {
+abstract class AbstractConnection(
+    val name: String,
+    private val socket: Socket,
+    private val input: BufferedReader,
+    private val output: PrintWriter
+): AutoCloseable {
     @Volatile
-    private var running = true
+    var running = true
+        private set
 
-    protected abstract fun processSignal(packet: SignalPacket)
-    protected abstract fun onException(t: Throwable)
-
-    override fun start() = Thread(this).start()
-
-    override fun send(packet: Packet) {
-        if (!running) return
-        output.println(PacketCodec.encode(packet))
+    fun send(packet: Packet) {
+        if (running) output.println(PacketCodec.encode(packet))
     }
 
-    override fun run() {
+    suspend fun start() {
         var throwable: Throwable? = null
         try {
             while (running) {
-                val received = input.readLine() ?: break
+                val received = withContext(Dispatchers.IO) { input.readLine() } ?: break
                 val packet = PacketCodec.decode(received) ?: run {
                     printErr("알 수 없는 데이터 수신: $received")
                     continue
@@ -40,6 +42,9 @@ abstract class AbstractClient(override val name: String, private val socket: Soc
         }
     }
 
+    protected abstract fun onException(throwable: Throwable)
+    protected abstract fun processSignal(packet: SignalPacket)
+
     override fun close() {
         if (!running) return
         send(ClosePacket)
@@ -47,5 +52,6 @@ abstract class AbstractClient(override val name: String, private val socket: Soc
         socket.close()
     }
 
-    override fun isClosed() = !running
+    override fun equals(other: Any?) = (other as? AbstractConnection)?.name == name
+    override fun hashCode() = name.hashCode()
 }

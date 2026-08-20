@@ -1,57 +1,69 @@
 package kr.hahaha98757.killchain.server
 
+import kotlinx.coroutines.*
 import kr.hahaha98757.killchain.common.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.ServerSocket
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.seconds
 
-val clients = ConcurrentHashMap<String, IClient>()
+val clients = ConcurrentHashMap<String, Client>()
 var port = 0
     private set
 
 val userListMsgPacket get() = MessagePacket("현재 유저 목록: ${clients.keys().toList()}")
 
-fun main() {
+fun main() = runBlocking {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
     println("Kill Chain (server) v2.0.0")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
-    Thread.sleep(1000)
+    delay(1.seconds)
 
-    do {
+    while (true) {
         println("포트를 설정하세요. (1-65535 사이의 정수)")
-        port = readln().toIntOrNull() ?: 0
-    } while (port !in 1..65535)
+        port = readln().toIntOrNull() ?: continue
+        if (port in 1..65535) break
+    }
 
     println()
     val serverSocket = runCatching { ServerSocket(port) }.getOrElse {
         printErr("서버를 여는데 실패했습니다.", it)
         exit(-1)
     }
-    port = serverSocket.localPort
 
     cls()
 
     println("서버를 열었습니다. (포트: $port)")
     println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
 
-    Thread(CommandHandler).start()
-    Thread(ClientObserver).start()
+    launch { InputHandler.start() }
+    launch { ClientObserver.start() }
 
     while (true) try {
         val socket = serverSocket.accept()
-        val input = BufferedReader(InputStreamReader(socket.getInputStream()))
-        val output = PrintWriter(OutputStreamWriter(socket.getOutputStream()), true)
-        val name = input.readLine().split(";")[1].split(":")[2]
+        launch {
+            try {
+                val input = socket.getInputStream().bufferedReader()
+                val output = PrintWriter(socket.getOutputStream().writer(), true)
 
-        Client(name, socket, input, output)
-    } catch (e: NameDuplicateException) {
-        printErr("유저가 서버 접속에 실패했습니다. (중복된 이름: ${e.message})")
+                var name: String
+                while (true) {
+                    name = withContext(Dispatchers.IO) { input.readLine() }
+                    if (name in clients.keys) {
+                        output.println(false)
+                        continue
+                    } else output.println(true)
+                    break
+                }
+
+                Client(name, socket, input, output).also { clients[name] = it }.start()
+            } catch (e: Exception) {
+                printErr("클라이언트와의 연결 중 오류가 발생했습니다.", e)
+            }
+        }
     } catch (e: Exception) {
-        printErr("유저가 서버 접속에 실패했습니다.", e)
+        printErr("서버에서 오류가 발생했습니다.", e)
     }
 }
 

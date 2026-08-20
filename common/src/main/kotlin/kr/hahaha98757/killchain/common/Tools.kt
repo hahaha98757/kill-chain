@@ -45,12 +45,11 @@ fun beep(frequency: Double, durationMs: Int = 200, volume: Double = 0.1) = Threa
         buffer[i] = (sin(angle) * 127 * volume).toInt().toByte()
     }
 
-    val format = AudioFormat(sampleRate, 8, 1, true, false) // 8bit, mono, signed, little endian
-    val line = AudioSystem.getSourceDataLine(format)
-    line.open(format)
-    line.start()
-    line.write(buffer, 0, buffer.size)
-    line.drain()
-    line.stop()
-    line.close()
+    val format = AudioFormat(sampleRate, 8, 1, true, false)
+    AudioSystem.getSourceDataLine(format).use {
+        it.open(format)
+        it.start()
+        it.write(buffer, 0, buffer.size)
+        it.drain()
+    }
 }.start()

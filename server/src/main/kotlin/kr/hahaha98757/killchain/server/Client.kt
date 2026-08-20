@@ -5,19 +5,10 @@ import java.io.BufferedReader
 import java.io.PrintWriter
 import java.net.Socket
 
-class Client(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractClient(name, socket, input, output) {
+class Client(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractConnection(name, socket, input, output) {
     init {
-        if (clients.containsKey(name)) {
-            send(DuplicatePacket)
-            close()
-            throw NameDuplicateException(name)
-        } else {
-            send(AcceptPacket)
-            clients[name] = this
-            sendAll(MessagePacket("$name 님이 접속했습니다."))
-            printAndSendAll(userListMsgPacket)
-            start()
-        }
+        sendAll(MessagePacket("$name 님이 접속했습니다."))
+        printAndSendAll(userListMsgPacket)
     }
 
     override fun onException(throwable: Throwable) {

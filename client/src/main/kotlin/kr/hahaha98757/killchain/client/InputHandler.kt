@@ -1,17 +1,19 @@
 package kr.hahaha98757.killchain.client
 
 import com.github.kwhat.jnativehook.GlobalScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kr.hahaha98757.killchain.common.*
 
-class CommandHandler(private val client: IClient): Runnable, IClient by client {
-    override fun run() {
+object InputHandler {
+    suspend fun start(connection: Connection) {
         while (true) {
-            val command = readln()
+            val command = withContext(Dispatchers.IO) { readln() }
             when (command.uppercase()) {
                 "CLS" -> cls()
                 "EXIT" -> {
                     println("서버를 떠나는 중...")
-                    close()
+                    connection.close()
                     GlobalScreen.unregisterNativeHook()
                     exit()
                 }
@@ -19,35 +21,35 @@ class CommandHandler(private val client: IClient): Runnable, IClient by client {
                 "KILL" -> {
                     println("강제종료를 시도합니다.")
                     kill()
-                    if (isClosed()) {
+                    if (!connection.running) {
                         printErr("서버와의 연결이 끊어져 있습니다.")
                         continue
                     }
-                    send(KillPacket(name))
+                    connection.send(KillPacket(connection.name))
                     println("서버에 강제 종료 신호를 전달했습니다.")
                 }
                 "LIST" -> {
-                    if (isClosed()) {
+                    if (!connection.running) {
                         printErr("서버와의 연결이 끊어져 있습니다.")
                         continue
                     }
-                    send(ListPacket)
+                    connection.send(ListPacket)
                 }
                 "PORT" -> {
-                    if (isClosed()) {
+                    if (!connection.running) {
                         printErr("서버와의 연결이 끊어져 있습니다.")
                         continue
                     }
-                    send(PortPacket)
+                    connection.send(PortPacket)
                 }
                 "TEST" -> {
                     println("테스트를 시도합니다.")
                     beep(1000.0)
-                    if (isClosed()) {
+                    if (!connection.running) {
                         printErr("서버와의 연결이 끊어져 있습니다.")
                         continue
                     }
-                    send(TestPacket(name))
+                    connection.send(TestPacket(connection.name))
                     println("서버에 테스트 신호를 전달했습니다.")
                 }
                 else -> printErr("'$command'은(는) 명령어가 아닙니다.")

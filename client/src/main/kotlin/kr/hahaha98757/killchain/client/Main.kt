@@ -1,6 +1,9 @@
 package kr.hahaha98757.killchain.client
 
 import com.github.kwhat.jnativehook.GlobalScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kr.hahaha98757.killchain.common.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -10,13 +13,14 @@ import java.net.Socket
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
+import kotlin.time.Duration.Companion.seconds
 
-fun main() {
+fun main(): Unit = runBlocking {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
     println("Kill Chain (client) v2.0.0")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
-    Thread.sleep(1000)
+    delay(1.seconds)
 
     var name: String
     while (true) {
@@ -27,7 +31,7 @@ fun main() {
     if (name == "client") {
         cls()
         singleMode()
-        return
+        exit()
     }
 
     println()
@@ -48,38 +52,38 @@ fun main() {
 
     println("서버 접속 중...")
 
-    runCatching {
+    try {
         val socket = Socket(host, port)
         val input = BufferedReader(InputStreamReader(socket.getInputStream()))
         val output = PrintWriter(OutputStreamWriter(socket.getOutputStream()), true)
 
-        val client = Client(name, socket, input, output)
+        output.println(name)
+        if (!input.readLine().toBoolean()) {
+            printErr("중복된 닉네임입니다.")
+            exit(-1)
+        }
 
-        Thread {
-            LogManager.getLogManager().reset()
-            Logger.getLogger(GlobalScreen::class.java.packageName).level = Level.OFF
+        val client = Connection(name, socket, input, output)
 
-            GlobalScreen.registerNativeHook()
-            GlobalScreen.addNativeKeyListener(object: AbstractKeyInputListener() {
-                override fun doKill() {
-                    println("강제종료를 시도합니다.")
-                    kill()
-                    client.send(KillPacket(name))
-                    println("서버에 강제 종료 신호를 전달했습니다.")
-                }
+        launch { client.start() }
+        launch { InputHandler.start(client) }
 
-                override fun doTest() {
-                    println("테스트를 시도합니다.")
-                    beep(1000.0)
-                    client.send(TestPacket(name))
-                    println("서버에 테스트 신호를 전달했습니다.")
-                }
-            })
-        }.start()
-
-        Thread(CommandHandler(client)).start()
-    }.onFailure {
-        printErr("서버 접속에 실패했습니다.", it)
+        registerKeyListener(
+            killBlock = {
+                println("강제종료를 시도합니다.")
+                kill()
+                client.send(KillPacket(name))
+                println("서버에 강제 종료 신호를 전달했습니다.")
+            },
+            testBlock = {
+                println("테스트를 시도합니다.")
+                beep(1000.0)
+                client.send(TestPacket(name))
+                println("서버에 테스트 신호를 전달했습니다.")
+            }
+        )
+    } catch (e: Exception) {
+        printErr("서버 접속에 실패했습니다.", e)
         GlobalScreen.unregisterNativeHook()
         exit(-1)
     }
@@ -92,4 +96,15 @@ fun kill() {
         "/IM", "GTA5.exe",
         "/IM", "GTA5_Enhanced.exe"
     ).start()
+}
+
+fun registerKeyListener(killBlock: () -> Unit, testBlock: () -> Unit) {
+    LogManager.getLogManager().reset()
+    Logger.getLogger(GlobalScreen::class.java.packageName).level = Level.OFF
+
+    GlobalScreen.registerNativeHook()
+    GlobalScreen.addNativeKeyListener(object: AbstractKeyInputListener() {
+        override fun doKill() = killBlock()
+        override fun doTest() = testBlock()
+    })
 }
