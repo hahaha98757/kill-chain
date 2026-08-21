@@ -16,7 +16,7 @@ object ServerObserver {
             if (!status) {
                 println("서버가 10초 동안 응답하지 않아 연결을 끊었습니다.")
                 connection.close()
-                beep(500.0, 1000, 1.0)
+                beep(500.0, 1000, 0.5)
                 break
             }
         }
