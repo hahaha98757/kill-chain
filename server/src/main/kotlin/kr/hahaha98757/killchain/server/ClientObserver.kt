@@ -14,10 +14,10 @@ object ClientObserver {
                 clientsPingStatus[client.name] = false
                 client.send(PingPacket)
             }
-            delay(10.seconds)
+            delay(3.seconds)
             clients.forEach { (name, client) ->
                 if (clientsPingStatus[name] == false) {
-                    println("$name 님이 10초 동안 응답하지 않아 연결을 끊었습니다.")
+                    println("$name 님이 3초 동안 응답하지 않아 연결을 끊었습니다.")
                     client.close()
                     sendAll(LeavePacket(name))
                     printAndSendAll(userListMsgPacket)
