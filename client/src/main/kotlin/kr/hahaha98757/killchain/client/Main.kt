@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.seconds
 
 fun main(): Unit = runBlocking {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (client) v2.0.0")
+    println("Kill Chain (client) v3.0.0")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     delay(1.seconds)

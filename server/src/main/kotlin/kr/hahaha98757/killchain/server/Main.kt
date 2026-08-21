@@ -14,7 +14,7 @@ val userListMsgPacket get() = MessagePacket("현재 유저 목록: ${clients.key
 
 fun main() = runBlocking {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
-    println("Kill Chain (server) v2.0.0")
+    println("Kill Chain (server) v3.0.0")
     println("공식 사이트: https://github.com/hahaha98757/kill-chain")
     println()
     delay(1.seconds)
