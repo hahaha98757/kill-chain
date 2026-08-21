@@ -4,14 +4,13 @@ import kotlinx.coroutines.*
 import kr.hahaha98757.killchain.common.*
 import java.io.PrintWriter
 import java.net.ServerSocket
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.seconds
 
-val clients = ConcurrentHashMap<String, Client>()
+val clients = mutableMapOf<String, Client>()
 var port = 0
     private set
 
-val userListMsgPacket get() = MessagePacket("현재 유저 목록: ${clients.keys().toList()}")
+val userListMsgPacket get() = MessagePacket("현재 유저 목록: ${clients.keys.toList()}")
 
 fun main() = runBlocking {
     println("Copyright (c) 2025 hahaha98757 (MIT License)")
@@ -41,7 +40,7 @@ fun main() = runBlocking {
     launch { ClientObserver.start() }
 
     while (true) try {
-        val socket = serverSocket.accept()
+        val socket = withContext(Dispatchers.IO) { serverSocket.accept() }
         launch {
             try {
                 val input = socket.getInputStream().bufferedReader()
@@ -50,14 +49,21 @@ fun main() = runBlocking {
                 var name: String
                 while (true) {
                     name = withContext(Dispatchers.IO) { input.readLine() }
+
                     if (name in clients.keys) {
                         output.println(false)
-                        continue
+                        socket.close()
+                        return@launch
                     } else output.println(true)
                     break
                 }
 
-                Client(name, socket, input, output).also { clients[name] = it }.start()
+                Client(name, socket, input, output).let {
+                    clients[name] = it
+                    printAndSendAll(MessagePacket("$name 님이 접속했습니다."))
+                    printAndSendAll(userListMsgPacket)
+                    it.start()
+                }
             } catch (e: Exception) {
                 printErr("클라이언트와의 연결 중 오류가 발생했습니다.", e)
             }

@@ -5,9 +5,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kr.hahaha98757.killchain.common.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 import java.io.PrintWriter
 import java.net.Socket
 import java.util.logging.Level
@@ -54,11 +51,13 @@ fun main(): Unit = runBlocking {
 
     try {
         val socket = Socket(host, port)
-        val input = BufferedReader(InputStreamReader(socket.getInputStream()))
-        val output = PrintWriter(OutputStreamWriter(socket.getOutputStream()), true)
+        val input = socket.getInputStream().bufferedReader()
+        val output = PrintWriter(socket.getOutputStream().writer(), true)
 
         output.println(name)
         if (!input.readLine().toBoolean()) {
+            output.println(ClosePacket)
+            socket.close()
             printErr("중복된 닉네임입니다.")
             exit(1)
         }
@@ -83,6 +82,7 @@ fun main(): Unit = runBlocking {
                 println("서버에 테스트 신호를 전달했습니다.")
             }
         )
+        println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
     } catch (e: Exception) {
         printErr("서버 접속에 실패했습니다.", e)
         GlobalScreen.unregisterNativeHook()

@@ -19,7 +19,7 @@ class Connection(name: String, socket: Socket, input: BufferedReader, output: Pr
                 beep(1000.0)
             }
             is KillPacket -> {
-                println("${packet.sender} 님으로 부터 강제 종료 신호를 받았습니다.")
+                println("${packet.sender} 님으로부터 강제 종료 신호를 받았습니다.")
                 kill()
             }
             is PingPacket -> send(PongPacket)

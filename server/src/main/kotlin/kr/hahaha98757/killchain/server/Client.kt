@@ -6,20 +6,15 @@ import java.io.PrintWriter
 import java.net.Socket
 
 class Client(name: String, socket: Socket, input: BufferedReader, output: PrintWriter): AbstractConnection(name, socket, input, output) {
-    init {
-        sendAll(MessagePacket("$name 님이 접속했습니다."))
-        printAndSendAll(userListMsgPacket)
-    }
-
     override fun onException(throwable: Throwable) {
         printErr("$name 님의 연결이 끊겼습니다.", throwable)
         sendAll(LeavePacket(name))
-        sendAll(userListMsgPacket)
+        printAndSendAll(userListMsgPacket)
     }
 
     override fun processSignal(packet: SignalPacket) {
         when (packet) {
-            is ListPacket -> printAndSendAll(userListMsgPacket)
+            is ListPacket -> send(userListMsgPacket)
             is PortPacket -> send(MessagePacket("포트: $port"))
             is TestPacket -> {
                 println("${packet.sender} 님이 테스트를 시도했습니다.")
@@ -34,7 +29,7 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
             is PingPacket -> send(PongPacket)
             is PongPacket -> ClientObserver.onPong(name)
             is ClosePacket -> {
-                sendAll(MessagePacket("$name 님이 서버를 떠났습니다."))
+                printAndSendAll(MessagePacket("$name 님이 서버를 떠났습니다."))
                 close()
                 printAndSendAll(userListMsgPacket)
             }

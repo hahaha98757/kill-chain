@@ -12,7 +12,7 @@ object InputHandler {
                 "CLS" -> cls()
                 "EXIT" -> {
                     println("유저를 내보내는 중...")
-                    clients.forEach { it.value.close() }
+                    clients.values.toList().forEach { it.close() }
                     exit()
                 }
                 "HELP" -> help()
