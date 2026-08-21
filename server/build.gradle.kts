@@ -22,7 +22,7 @@ tasks.register<Exec>("packageExe") {
     group = "build"
     description = "Packages the application into an executable format using JPackage."
     dependsOn("shadowJar")
-    if (file("build/jpackage").exists()) file("build/jpackage").deleteRecursively()
+    delete("build/jpackage")
     commandLine(
         "jpackage",
         "--type", "app-image",
@@ -31,7 +31,8 @@ tasks.register<Exec>("packageExe") {
         "--main-jar", "server.jar",
         "--icon", "icon.ico",
         "--dest", "build/jpackage",
-        "--win-console"
+        "--win-console",
+        "--java-options", "--enable-native-access=ALL-UNNAMED"
     )
     doLast { file("build/jpackage/server/server.ico").delete() }
 }

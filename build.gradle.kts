@@ -28,7 +28,7 @@ val packageFolder = file("build/KillChain-$version")
 tasks.register("build") {
     group = "build"
     description = "Builds the entire application and packages it into a single directory."
-    if (packageFolder.exists()) packageFolder.deleteRecursively()
+    delete(packageFolder)
     packageFolder.mkdirs()
     dependsOn(":client:packageExe", ":server:packageExe")
 
