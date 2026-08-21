@@ -67,6 +67,7 @@ fun main(): Unit = runBlocking {
 
         launch { client.start() }
         launch { InputHandler.start(client) }
+        launch { ServerObserver.start(client) }
 
         registerKeyListener(
             killBlock = {

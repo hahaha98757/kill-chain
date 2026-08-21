@@ -23,6 +23,7 @@ class Connection(name: String, socket: Socket, input: BufferedReader, output: Pr
                 kill()
             }
             is PingPacket -> send(PongPacket)
+            is PongPacket -> ServerObserver.onPong()
             is LeavePacket -> {
                 println("${packet.client} 님의 연결이 끊겼습니다.")
                 beep(500.0, 1000, 1.0)

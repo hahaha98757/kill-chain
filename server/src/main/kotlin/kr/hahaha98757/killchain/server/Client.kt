@@ -31,6 +31,7 @@ class Client(name: String, socket: Socket, input: BufferedReader, output: PrintW
                 sendAll(packet, packet.sender)
                 println("접속한 모든 유저에게 강제 종료 신호를 전달했습니다.")
             }
+            is PingPacket -> send(PongPacket)
             is PongPacket -> ClientObserver.onPong(name)
             is ClosePacket -> {
                 sendAll(MessagePacket("$name 님이 서버를 떠났습니다."))
