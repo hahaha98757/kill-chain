@@ -83,6 +83,7 @@ fun main(): Unit = runBlocking {
             }
         )
         println("'HELP'를 입력해 명령어 목록을 볼 수 있습니다.")
+        println("'F2'를 눌러 테스트를 할 수 있습니다. 'ESC + F1'을 눌러 강제 종료를 할 수 있습니다.")
     } catch (e: Exception) {
         printErr("서버 접속에 실패했습니다.", e)
         GlobalScreen.unregisterNativeHook()
